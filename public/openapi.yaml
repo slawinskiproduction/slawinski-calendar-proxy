@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.1.0
 info:
   title: Calendar Proxy (Slawinski via Vercel)
-  version: 1.0.1
+  version: 1.0.2
 servers:
   - url: https://slawinski-calendar-proxy.vercel.app
 components:
@@ -10,6 +10,7 @@ components:
       type: apiKey
       in: query
       name: key
+  schemas: {}   # prázdný objekt, aby validator byl spokojený
 paths:
   /:
     get:
@@ -28,9 +29,9 @@ paths:
           schema:
             type: string
             enum:
-              - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com" # Planner
-              - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com" # Booking
-              - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com" # Routines
+              - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com"
+              - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com"
+              - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com"
         - in: query
           name: time_min
           schema: { type: string, format: date-time }
