@@ -3,93 +3,22 @@ info:
   title: Calendar Proxy (Slawinski via Vercel)
   version: 1.0.0
 servers:
-  - url: https://slawinski-calendar-proxy.vercel.app/
-components:
-  securitySchemes:
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: key
+  - url: https://slawinski-calendar-proxy.vercel.app
 paths:
   /:
     get:
       operationId: list
-      security:
-        - apiKeyQuery: []
       parameters:
         - in: query
           name: op
           required: true
           schema:
             type: string
-            enum: [list_calendars, list_events]
         - in: query
-          name: calendar_id
+          name: key
+          required: true
           schema:
             type: string
-            enum:
-              - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com"
-              - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com"
-              - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com"
-        - in: query
-          name: time_min
-          schema: { type: string, format: date-time }
-        - in: query
-          name: time_max
-          schema: { type: string, format: date-time }
       responses:
         '200':
           description: OK
-          content:
-            application/json:
-              schema:
-                type: object
-    post:
-      operationId: create
-      security:
-        - apiKeyQuery: []
-      parameters:
-        - in: query
-          name: op
-          required: true
-          schema:
-            type: string
-            enum: [create_event]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [calendar_id, summary, start, end]
-              properties:
-                calendar_id:
-                  type: string
-                  enum:
-                    - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com"
-                    - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com"
-                    - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com"
-                summary: { type: string }
-                start:
-                  type: object
-                  properties:
-                    dateTime: { type: string, format: date-time }
-                end:
-                  type: object
-                  properties:
-                    dateTime: { type: string, format: date-time }
-                location: { type: string }
-                description: { type: string }
-                attendees:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      email: { type: string }
-      responses:
-        '200':
-          description: Created
-          content:
-            application/json:
-              schema:
-                type: object
