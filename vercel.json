@@ -1,6 +1,12 @@
 {
+  "version": 2,
+  "functions": {
+    "api/**/*.js": { "runtime": "nodejs18.x" }
+  },
   "routes": [
-    { "src": "/openapi.yaml", "dest": "/public/openapi.yaml" },
-    { "src": "/(.*)", "dest": "/api/calendar" }
+    { "src": "^/api/test-gcal-calendars$", "dest": "/api/test-gcal-calendars.js" },
+    { "src": "^/api/google-calendars$", "dest": "/api/google-calendars.js" },
+    { "src": "^/api/ping$", "dest": "/api/ping.js" },
+    { "src": "^/api/_env-check$", "dest": "/api/_env-check.js" }
   ]
 }
