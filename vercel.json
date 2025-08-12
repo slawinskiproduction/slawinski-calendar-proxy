@@ -4,9 +4,12 @@
     "api/**/*.js": { "runtime": "nodejs18.x" }
   },
   "routes": [
-    { "src": "^/api/test-gcal-calendars$", "dest": "/api/test-gcal-calendars.js" },
-    { "src": "^/api/google-calendars$", "dest": "/api/google-calendars.js" },
     { "src": "^/api/ping$", "dest": "/api/ping.js" },
-    { "src": "^/api/_env-check$", "dest": "/api/_env-check.js" }
+    { "src": "^/api/_env-check$", "dest": "/api/_env-check.js" },
+    { "src": "^/api/test-gcal-calendars$", "dest": "/api/test-gcal-calendars.js" },
+
+    // ↓ nech tu až pak: tvoje původní proxy/ostatní routy
+    { "src": "^/api/google-calendars$", "dest": "/api/google-calendars.js" },
+    { "src": "^/api/calendar$", "dest": "/api/calendar.js" }
   ]
 }
