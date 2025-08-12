@@ -1,14 +1,13 @@
 {
   "version": 2,
   "functions": {
-    "api/**/*.js": { "runtime": "nodejs18.x" }
+    "api/**/*.{js,ts}": {
+      "runtime": "nodejs18.x"
+    }
   },
   "routes": [
     { "src": "^/api/ping$", "dest": "/api/ping.js" },
     { "src": "^/api/_env-check$", "dest": "/api/_env-check.js" },
-    { "src": "^/api/test-gcal-calendars$", "dest": "/api/test-gcal-calendars.js" },
-
-    { "src": "^/api/google-calendars$", "dest": "/api/google-calendars.js" },
-    { "src": "^/api/calendar$", "dest": "/api/calendar.js" }
+    { "src": "^/api/test-gcal-calendars$", "dest": "/api/test-gcal-calendars.js" }
   ]
 }
