@@ -1,3 +1,5 @@
+console.log("=== TEST GCAL ENDPOINT ===");
+
 // api/test-gcal-calendars.js
 module.exports = async (req, res) => {
   try {
