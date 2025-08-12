@@ -1,86 +1,156 @@
-openapi: 3.1.0
-info:
-  title: Calendar Proxy (Slawinski via Vercel)
-  version: 1.0.2
-servers:
-  - url: https://slawinski-calendar-proxy.vercel.app
-components:
-  securitySchemes:
-    apiKeyQuery:
-      type: apiKey
-      in: query
-      name: key
-  schemas: {}   # prázdný objekt, aby validator byl spokojený
-paths:
-  /:
-    get:
-      operationId: list
-      security:
-        - apiKeyQuery: []
-      parameters:
-        - in: query
-          name: op
-          required: true
-          schema:
-            type: string
-            enum: [list_calendars, list_events]
-        - in: query
-          name: calendar_id
-          schema:
-            type: string
-            enum:
-              - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com"
-              - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com"
-              - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com"
-        - in: query
-          name: time_min
-          schema: { type: string, format: date-time }
-        - in: query
-          name: time_max
-          schema: { type: string, format: date-time }
-      responses:
-        '200': { description: OK }
-    post:
-      operationId: create
-      security:
-        - apiKeyQuery: []
-      parameters:
-        - in: query
-          name: op
-          required: true
-          schema:
-            type: string
-            enum: [create_event]
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              required: [calendar_id, summary, start, end]
-              properties:
-                calendar_id:
-                  type: string
-                  enum:
-                    - "c_6280e09d3db27df80c65c3379a78ff214787abf4289b995e1164edf39981d863@group.calendar.google.com"
-                    - "c_51i0pjeu08qlbh46mqnckjsfec@group.calendar.google.com"
-                    - "c_c05e48775f86b729d3b9a20f8891bbf874e7b5b8e23fd98feb7b86daacc80a1a@group.calendar.google.com"
-                summary: { type: string }
-                start:
-                  type: object
-                  properties:
-                    dateTime: { type: string, format: date-time }
-                end:
-                  type: object
-                  properties:
-                    dateTime: { type: string, format: date-time }
-                location: { type: string }
-                description: { type: string }
-                attendees:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      email: { type: string }
-      responses:
-        '200': { description: Created }
+{
+  "name": "calendar_events_api",
+  "description": "Správa Google Kalendáře přes proxy API (načítání, přidávání, úprava, mazání událostí)",
+  "schema_version": "v1",
+  "functions": [
+    {
+      "name": "get_events",
+      "description": "Načte události z konkrétního Google kalendáře přes proxy API",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "description": "Google Calendar ID"
+          },
+          "timeMin": {
+            "type": "string",
+            "description": "Počáteční čas v ISO 8601 formátu"
+          },
+          "timeMax": {
+            "type": "string",
+            "description": "Koncový čas v ISO 8601 formátu"
+          },
+          "pageToken": {
+            "type": "string",
+            "description": "Token pro stránkování výsledků (volitelné)"
+          }
+        },
+        "required": ["calendarId"]
+      },
+      "request": {
+        "method": "GET",
+        "url": "https://slawinski-calendar-proxy.vercel.app/api/events",
+        "query": {
+          "calendarId": "{calendarId}",
+          "timeMin": "{timeMin}",
+          "timeMax": "{timeMax}",
+          "pageToken": "{pageToken}"
+        }
+      }
+    },
+    {
+      "name": "create_event",
+      "description": "Vytvoří novou událost v Google kalendáři",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "calendarId": {
+            "type": "string",
+            "description": "Google Calendar ID"
+          },
+          "summary": { "type": "string", "description": "Název události" },
+          "description": { "type": "string" },
+          "location": { "type": "string" },
+          "start": { "type": "string", "description": "Start v ISO formátu" },
+          "end": { "type": "string", "description": "Konec v ISO formátu" },
+          "allDay": { "type": "boolean" },
+          "date": { "type": "string", "description": "Datum YYYY-MM-DD (pro allDay)" },
+          "attendees": { "type": "array", "items": { "type": "object" } },
+          "reminders": { "type": "object" },
+          "colorId": { "type": "string" },
+          "visibility": { "type": "string" },
+          "conference": { "type": "object" },
+          "status": { "type": "string" }
+        },
+        "required": ["calendarId", "summary", "start", "end"]
+      },
+      "request": {
+        "method": "POST",
+        "url": "https://slawinski-calendar-proxy.vercel.app/api/events",
+        "body": {
+          "calendarId": "{calendarId}",
+          "summary": "{summary}",
+          "description": "{description}",
+          "location": "{location}",
+          "start": "{start}",
+          "end": "{end}",
+          "allDay": "{allDay}",
+          "date": "{date}",
+          "attendees": "{attendees}",
+          "reminders": "{reminders}",
+          "colorId": "{colorId}",
+          "visibility": "{visibility}",
+          "conference": "{conference}",
+          "status": "{status}"
+        }
+      }
+    },
+    {
+      "name": "update_event",
+      "description": "Aktualizuje existující událost v Google kalendáři",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "calendarId": { "type": "string" },
+          "eventId": { "type": "string" },
+          "summary": { "type": "string" },
+          "description": { "type": "string" },
+          "location": { "type": "string" },
+          "start": { "type": "string" },
+          "end": { "type": "string" },
+          "allDay": { "type": "boolean" },
+          "date": { "type": "string" },
+          "attendees": { "type": "array", "items": { "type": "object" } },
+          "reminders": { "type": "object" },
+          "colorId": { "type": "string" },
+          "visibility": { "type": "string" },
+          "conference": { "type": "object" },
+          "status": { "type": "string" }
+        },
+        "required": ["calendarId", "eventId"]
+      },
+      "request": {
+        "method": "PATCH",
+        "url": "https://slawinski-calendar-proxy.vercel.app/api/events",
+        "body": {
+          "calendarId": "{calendarId}",
+          "eventId": "{eventId}",
+          "summary": "{summary}",
+          "description": "{description}",
+          "location": "{location}",
+          "start": "{start}",
+          "end": "{end}",
+          "allDay": "{allDay}",
+          "date": "{date}",
+          "attendees": "{attendees}",
+          "reminders": "{reminders}",
+          "colorId": "{colorId}",
+          "visibility": "{visibility}",
+          "conference": "{conference}",
+          "status": "{status}"
+        }
+      }
+    },
+    {
+      "name": "delete_event",
+      "description": "Smaže událost z Google kalendáře",
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "calendarId": { "type": "string" },
+          "eventId": { "type": "string" }
+        },
+        "required": ["calendarId", "eventId"]
+      },
+      "request": {
+        "method": "DELETE",
+        "url": "https://slawinski-calendar-proxy.vercel.app/api/events",
+        "query": {
+          "calendarId": "{calendarId}",
+          "eventId": "{eventId}"
+        }
+      }
+    }
+  ]
+}
